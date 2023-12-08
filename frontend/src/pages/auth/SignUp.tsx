@@ -16,17 +16,30 @@ import MenuBookIcon from "@mui/icons-material/MenuBook";
 import { object, string } from "yup";
 import { Link } from "react-router-dom";
 
-const logInSchema = object({
+const signUpSchema = object({
   username: string().trim().required("Username cannot be empty."),
+  email: string().email("Email is invalid.").required("Email cannot be empty."),
   password: string()
     .required("Password cannot be empty.")
     .min(8, "Password must be at least 8 characters long"),
+  confirmPassword: string().test({
+    name: "samePassword",
+    message: "Password does not match.",
+    test: function (value) {
+      return value === this.parent.password;
+    },
+  }),
 });
 
-function LogIn() {
+function SignUp() {
   const formik = useFormik({
-    initialValues: { username: "", password: "" },
-    validationSchema: logInSchema,
+    initialValues: {
+      username: "",
+      password: "",
+      confirmPassword: "",
+      email: "",
+    },
+    validationSchema: signUpSchema,
     onSubmit: async (values) => {
       console.log({ values });
     },
@@ -55,6 +68,20 @@ function LogIn() {
               <FormErrorMessage>{errors.username}</FormErrorMessage>
             </FormControl>
             <FormControl
+              isInvalid={touched.email && errors.email !== undefined}
+              onBlur={handleBlur}
+            >
+              <FormLabel>Email</FormLabel>
+              <Input
+                type="email"
+                id="email"
+                name="email"
+                value={values.email}
+                onChange={handleChange}
+              />
+              <FormErrorMessage>{errors.email}</FormErrorMessage>
+            </FormControl>
+            <FormControl
               isInvalid={touched.password && errors.password !== undefined}
               onBlur={handleBlur}
             >
@@ -66,14 +93,30 @@ function LogIn() {
                 value={values.password}
                 onChange={handleChange}
               />
-
               <FormErrorMessage>{errors.password}</FormErrorMessage>
             </FormControl>
-            <Button type={"submit"}>Log In</Button>
+            <FormControl
+              isInvalid={
+                touched.confirmPassword && errors.confirmPassword !== undefined
+              }
+              onBlur={handleBlur}
+            >
+              <FormLabel>Confirm Password</FormLabel>
+              <Input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                value={values.confirmPassword}
+                onChange={handleChange}
+              />
+              <FormErrorMessage>{errors.confirmPassword}</FormErrorMessage>
+            </FormControl>
+
+            <Button type="submit">Sign Up</Button>
             <Text>
               or{" "}
-              <ChakraLink as={Link} to={"/signup"}>
-                sign up
+              <ChakraLink as={Link} to={"/"}>
+                log in
               </ChakraLink>
             </Text>
           </VStack>
@@ -83,4 +126,4 @@ function LogIn() {
   );
 }
 
-export default LogIn;
+export default SignUp;
