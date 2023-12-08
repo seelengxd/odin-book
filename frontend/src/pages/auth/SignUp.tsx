@@ -10,11 +10,13 @@ import {
   Link as ChakraLink,
   Text,
   VStack,
+  useToast,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import { object, string } from "yup";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { authApi } from "../../api/auth";
 
 const signUpSchema = object({
   username: string().trim().required("Username cannot be empty."),
@@ -32,6 +34,9 @@ const signUpSchema = object({
 });
 
 function SignUp() {
+  const navigate = useNavigate();
+  const toast = useToast();
+
   const formik = useFormik({
     initialValues: {
       username: "",
@@ -41,11 +46,25 @@ function SignUp() {
     },
     validationSchema: signUpSchema,
     onSubmit: async (values) => {
-      console.log({ values });
+      authApi
+        .signUp(values)
+        .then(() => navigate("/"))
+        .catch((err) => {
+          err.response.data.errors.map((err: { msg: string }) =>
+            toast({
+              title: "Sign up failed.",
+              description: err.msg,
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+            })
+          );
+        });
     },
   });
   const { touched, errors, values, handleChange, handleBlur, handleSubmit } =
     formik;
+
   return (
     <Center width={"60%"}>
       <Box width={"100%"}>

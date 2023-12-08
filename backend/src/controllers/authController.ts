@@ -58,7 +58,8 @@ export const logIn: RequestHandler<LogInData>[] = [
           .json({ errors: [{ msg: "Invalid username or password." }] });
       }
       req.logIn(user, next);
-      res.json({ user });
+      const { password, ...userWithoutPassword } = user;
+      res.json({ user: userWithoutPassword });
       return;
     })(req, res, next);
   },

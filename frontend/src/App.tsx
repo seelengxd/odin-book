@@ -1,16 +1,15 @@
 import React from "react";
-import "./App.css";
-import { ChakraProvider, VStack } from "@chakra-ui/react";
-import Navbar from "./components/navigation/Navbar";
+import { ChakraProvider } from "@chakra-ui/react";
 import AppRouter from "./pages/routing/AppRouter";
+import { Provider } from "react-redux";
+import { store } from "./reducers/store";
 
 function App() {
   return (
     <ChakraProvider>
-      <VStack width={"100%"}>
-        <Navbar />
+      <Provider store={store}>
         <AppRouter />
-      </VStack>
+      </Provider>
     </ChakraProvider>
   );
 }
