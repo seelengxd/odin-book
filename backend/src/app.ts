@@ -5,6 +5,7 @@ import passport from "passport";
 import session from "express-session";
 import logger from "morgan";
 import authRouter from "./routes/auth";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 
 dotenv.config();
@@ -16,11 +17,26 @@ const FRONTEND_URL = process.env.FRONTEND_URL;
 app.use(express.json());
 app.use(logger("dev"));
 app.use(cors({ origin: FRONTEND_URL, credentials: true }));
+app.use(express.urlencoded({ extended: false }));
 
 // Auth related middleware
-app.use(session({ secret: "secret" }));
+app.use(cookieParser());
+app.use(
+  session({
+    secret: "secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false,
+      httpOnly: true,
+      sameSite: "none",
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    },
+  })
+);
+// app.use((req, res) => console.log(req.cookies));
 app.use(passport.initialize());
-app.use(passport.authenticate("session"));
+app.use(passport.session());
 app.use(authRouter);
 
 app.use("/api", apiRouter);

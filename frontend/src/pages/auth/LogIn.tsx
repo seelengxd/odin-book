@@ -84,7 +84,6 @@ function LogIn() {
                 value={values.password}
                 onChange={handleChange}
               />
-
               <FormErrorMessage>{errors.password}</FormErrorMessage>
             </FormControl>
             <Button type={"submit"}>Log In</Button>
