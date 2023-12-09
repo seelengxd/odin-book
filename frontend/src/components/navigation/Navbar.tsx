@@ -8,12 +8,14 @@ import {
   Button,
 } from "@chakra-ui/react";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { selectUser } from "../../reducers/authSlice";
+import { selectUser, setUser } from "../../reducers/authSlice";
+import { authApi } from "../../api/auth";
 
 function Navbar() {
   const user = useSelector(selectUser);
+  const dispatch = useDispatch();
   return (
     <Flex width={"100%"} p={4} backgroundColor={"orange.500"}>
       <HStack>
@@ -27,7 +29,11 @@ function Navbar() {
       <Spacer />
       {user && (
         <HStack>
-          <Button>Log Out</Button>
+          <Button
+            onClick={() => authApi.logOut().then(() => dispatch(setUser(null)))}
+          >
+            Log Out
+          </Button>
           <Text fontSize="lg" fontWeight={"bold"}>
             {user.username}
           </Text>
