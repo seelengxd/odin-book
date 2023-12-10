@@ -4,6 +4,7 @@ import { validate } from "../middleware/validator";
 import prisma from "../lib/db";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
+import { Strategy as GoogleStrategy } from "passport-google-oidc";
 import { User } from "@prisma/client";
 
 interface LogInData {
@@ -14,6 +15,11 @@ interface LogInData {
 interface SignUpData extends LogInData {
   email: string;
   confirmPassword: string;
+}
+
+interface Profile {
+  id: string;
+  emails: Array<{ value: string }>;
 }
 
 declare global {
@@ -34,15 +40,37 @@ passport.use(
   })
 );
 
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env["GOOGLE_CLIENT_ID"],
+      clientSecret: process.env["GOOGLE_CLIENT_SECRET"],
+      callbackURL: "http://localhost:10000/oauth2/redirect",
+      scope: ["email"],
+    },
+    async function verify(issuer: string, profile: Profile, cb) {
+      const email = profile.emails[0].value;
+      const user = await prisma.user.findUnique({ where: { email } });
+      if (!user) {
+        // Create new user if email is not used.
+        const username = email.split("@")[0];
+        const newUser = await prisma.user.create({
+          data: { username, email, password: "placeholder" },
+        });
+        cb(null, newUser);
+      } else {
+        cb(null, user);
+      }
+    }
+  )
+);
+
 passport.serializeUser(function (user, cb) {
-  console.log({ serialized: user });
   cb(null, user.id);
 });
 
 passport.deserializeUser(async function (userId: number, cb) {
-  console.log("test did this run");
   const user = await prisma.user.findUnique({ where: { id: userId } });
-  console.log({ deserialized: user });
   cb(null, user);
 });
 
@@ -63,7 +91,6 @@ export const logIn: RequestHandler<LogInData>[] = [
             .status(401)
             .json({ errors: [{ msg: "Invalid username or password." }] });
         }
-        console.log({ user });
         req.logIn(user, function (err) {
           if (err) {
             return next(err);
@@ -71,17 +98,34 @@ export const logIn: RequestHandler<LogInData>[] = [
           const { password, ...userWithoutPassword } = user;
           res.json({ user: userWithoutPassword });
         });
-        // res.cookie("test", "test", {
-        //   secure: true,
-        //   httpOnly: true,
-        //   // sameSite: "None",
-        //   sameSite: false,
-        //   maxAge: 1000 * 60 * 60 * 24 * 7,
-        // });
       }
     )(req, res, next);
   },
 ];
+
+export const logInGoogle: RequestHandler = (req, res, next) => {
+  passport.authenticate(
+    "google",
+    {
+      session: true,
+    },
+    function (err: Error, user: User) {
+      if (err) {
+        return next(err);
+      }
+      if (!user) {
+        res.json({ msg: "no user yet" });
+      }
+      req.logIn(user, function (err) {
+        if (err) {
+          return next(err);
+        }
+        const { password, ...userWithoutPassword } = user;
+        res.redirect("http://localhost:3000");
+      });
+    }
+  )(req, res, next);
+};
 
 export const signUp: RequestHandler<SignUpData>[] = [
   body("username").trim().notEmpty(),

@@ -17,7 +17,7 @@ const FRONTEND_URL = process.env.FRONTEND_URL;
 app.use(express.json());
 app.use(logger("dev"));
 app.use(cors({ origin: FRONTEND_URL, credentials: true }));
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 // Auth related middleware
 app.use(cookieParser());

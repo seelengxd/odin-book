@@ -11,9 +11,12 @@ import {
   Text,
   VStack,
   useToast,
+  Divider,
+  Circle,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
+import GoogleIcon from "@mui/icons-material/Google";
 import { object, string } from "yup";
 import { Link } from "react-router-dom";
 import { authApi } from "../../api/auth";
@@ -93,6 +96,13 @@ function LogIn() {
                 sign up
               </ChakraLink>
             </Text>
+            <Divider />
+            <Text>or you can sign in with </Text>
+            <ChakraLink as={Link} to={"http://localhost:10000/oauth2/redirect"}>
+              <Circle>
+                <GoogleIcon />
+              </Circle>
+            </ChakraLink>
           </VStack>
         </form>
       </Box>
