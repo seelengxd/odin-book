@@ -120,7 +120,6 @@ export const logInGoogle: RequestHandler = (req, res, next) => {
         if (err) {
           return next(err);
         }
-        const { password, ...userWithoutPassword } = user;
         res.redirect("http://localhost:3000");
       });
     }

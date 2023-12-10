@@ -11,8 +11,27 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  username String @unique
-  password String
+  id          Int             @id @default(autoincrement())
+  email       String          @unique
+  username    String          @unique
+  password    String
+  requestedBy FriendRequest[] @relation("requestedBy")
+  requesting  FriendRequest[] @relation("requesting")
+  friends     User[]          @relation("Friends")
+  friendsWith User[]          @relation("Friends")
+}
+
+model FriendRequest {
+  id            Int                 @id @default(autoincrement())
+  requestedBy   User                @relation("requestedBy", fields: [requestedById], references: [id])
+  requesting    User                @relation("requesting", fields: [requestingId], references: [id])
+  requestedById Int
+  requestingId  Int
+  status        FriendRequestStatus @default(PENDING)
+}
+
+enum FriendRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }

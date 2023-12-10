@@ -8,7 +8,7 @@ export const validate = <T extends Record<string, any>>(
 ) => {
   const result = validationResult(req);
   if (!result.isEmpty()) {
-    res.json({ errors: result.array() });
+    res.status(400).json({ errors: result.array() });
     return;
   }
   next();
