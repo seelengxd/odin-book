@@ -132,7 +132,7 @@ function Feed() {
             </CardHeader>
             <CardBody>
               <Text>{post.content}</Text>
-              <Gallery files={post.files} />
+              <Gallery files={post.files} hideIfEmpty={true} />
             </CardBody>
           </Card>
         ))}

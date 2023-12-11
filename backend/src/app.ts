@@ -19,7 +19,6 @@ app.use(express.json());
 app.use(logger("dev"));
 app.use(cors({ origin: FRONTEND_URL, credentials: true }));
 app.use(express.urlencoded({ extended: true }));
-console.log(path.join(__dirname, "uploads"));
 app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 // Auth related middleware
 app.use(cookieParser());

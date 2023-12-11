@@ -6,12 +6,13 @@ import { File as UploadedFile } from "../../types/post";
 
 interface Props {
   files: (UploadedFile | File)[];
+  hideIfEmpty?: boolean;
 }
-function Gallery({ files }: Props) {
+function Gallery({ files, hideIfEmpty = false }: Props) {
   const numFiles = files.length;
   const [index, setIndex] = useState(1);
   if (!numFiles) {
-    return <Text>No images or videos yet...</Text>;
+    return hideIfEmpty ? <></> : <Text>No images or videos yet...</Text>;
   }
   const currentFile = files[index - 1];
   return (
