@@ -2,9 +2,10 @@ import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons";
 import { Card, HStack, IconButton, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import ImagePreview from "./ImagePreview";
+import { File as UploadedFile } from "../../types/post";
 
 interface Props {
-  files: File[];
+  files: (UploadedFile | File)[];
 }
 function Gallery({ files }: Props) {
   const numFiles = files.length;
@@ -20,12 +21,14 @@ function Gallery({ files }: Props) {
           icon={<ArrowLeftIcon />}
           aria-label="previous"
           onClick={() => setIndex(((index - 2 + numFiles) % numFiles) + 1)}
+          disabled={numFiles === 1}
         />
         <ImagePreview file={currentFile} />
         <IconButton
           icon={<ArrowRightIcon />}
           aria-label="next"
           onClick={() => setIndex(((index + numFiles) % numFiles) + 1)}
+          disabled={numFiles === 1}
         />
       </HStack>
       <HStack justify={"center"}>

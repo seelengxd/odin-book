@@ -19,6 +19,7 @@ model User {
   requesting  FriendRequest[] @relation("requesting")
   friends     User[]          @relation("Friends")
   friendsWith User[]          @relation("Friends")
+  Post        Post[]
 }
 
 model FriendRequest {
@@ -34,4 +35,21 @@ enum FriendRequestStatus {
   PENDING
   ACCEPTED
   REJECTED
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  content   String
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+  createdAt DateTime @default(now())
+  files     File[]
+}
+
+model File {
+  id     Int    @id @default(autoincrement())
+  name   String
+  url    String
+  post   Post   @relation(fields: [postId], references: [id])
+  postId Int
 }
