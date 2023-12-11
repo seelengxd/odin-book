@@ -100,8 +100,8 @@ export const handleFriendRequest: RequestHandler[] = checkUserExists.concat([
         data: { friends: { connect: { id: otherUserId } } },
       });
       await prisma.user.update({
-        where: { id: user.id },
-        data: { friends: { connect: { id: otherUserId } } },
+        where: { id: otherUserId },
+        data: { friends: { connect: { id: user.id } } },
       });
     }
 
