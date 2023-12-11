@@ -5,8 +5,8 @@ import {
   getFriendsAndRequestsIds,
   removePassword,
 } from "../utils/user";
-import { body, param } from "express-validator";
-import { validate } from "../middleware/validator";
+import { body } from "express-validator";
+import { checkUserExists, validate } from "../middleware/validator";
 import { FriendRequestStatus } from "@prisma/client";
 
 export const index: RequestHandler = async (req, res) => {
@@ -18,23 +18,6 @@ export const index: RequestHandler = async (req, res) => {
   res.json({ users: usersWithFriendStatus.map(removePassword) });
 };
 
-const checkUserExists: RequestHandler[] = [
-  param("otherUserId").isInt(),
-  validate,
-  async (req, res, next) => {
-    const otherUserId = req.params.otherUserId;
-    const otherUser = await prisma.user.findUnique({
-      where: { id: parseInt(otherUserId) },
-    });
-    if (!otherUser) {
-      res.status(400).json({
-        errors: [{ msg: `User with id ${otherUserId} does not exist.` }],
-      });
-      return;
-    }
-    next();
-  },
-];
 // POST friend-requests/:id
 export const createFriendRequest: RequestHandler[] = checkUserExists.concat([
   async (req, res) => {
