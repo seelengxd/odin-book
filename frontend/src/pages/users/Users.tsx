@@ -8,7 +8,7 @@ import {
   TabPanels,
   Tabs,
 } from "@chakra-ui/react";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { userApi } from "../../api/users";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import UserList from "./UserList";
@@ -18,9 +18,10 @@ import { selectUsers, setUsers } from "../../reducers/userSlice";
 export function Users() {
   const dispatch = useDispatch();
   const users = useSelector(selectUsers);
-  const loadUsers = () => {
-    userApi.getUsers().then((users) => dispatch(setUsers(users)));
-  };
+  const loadUsers = useCallback(
+    () => userApi.getUsers().then((users) => dispatch(setUsers(users))),
+    [dispatch]
+  );
   const sendFriendRequest = async (otherUserId: number) => {
     await userApi.sendFriendRequest(otherUserId);
     await loadUsers();
@@ -29,7 +30,9 @@ export function Users() {
     await userApi.handleFriendRequest(otherUserId, accept);
     await loadUsers();
   };
-  useEffect(loadUsers, [dispatch]);
+  useEffect(() => {
+    loadUsers();
+  }, [loadUsers]);
   return (
     <Box width={"80%"}>
       <Heading mb={2}>

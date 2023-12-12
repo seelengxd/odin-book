@@ -6,14 +6,13 @@ import {
   Spacer,
   Text,
   Button,
-  Badge,
 } from "@chakra-ui/react";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { selectUser, setUser } from "../../reducers/authSlice";
 import { authApi } from "../../api/auth";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { userApi } from "../../api/users";
 import NotificationCount from "../notification/NotificationCount";
 import { selectIncomingRequestCount, setUsers } from "../../reducers/userSlice";

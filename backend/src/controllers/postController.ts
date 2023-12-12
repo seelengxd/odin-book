@@ -54,6 +54,13 @@ export const index: RequestHandler = async (req, res) => {
       },
       createdAt: true,
       files: true,
+      likes: {
+        select: {
+          id: true,
+          user: true,
+        },
+      },
+      comments: true,
     },
     orderBy: {
       createdAt: "desc",
