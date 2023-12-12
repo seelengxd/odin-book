@@ -1,32 +1,9 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Divider,
-  FormControl,
-  FormErrorMessage,
-  HStack,
-  Heading,
-  Icon,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
-  Textarea,
-  VStack,
-} from "@chakra-ui/react";
-import { Edit, Photo, PhotoAlbum } from "@mui/icons-material";
-import { useEffect, useRef, useState } from "react";
-import Gallery from "../../components/posts/Gallery";
-import { useFormik } from "formik";
-import { object, string } from "yup";
+import { Box, VStack } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import postsApi from "../../api/posts";
 import { Post } from "../../types/post";
 import CreatePost from "./CreatePost";
+import PostCard from "./PostCard";
 
 function Feed() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -49,18 +26,7 @@ function Feed() {
       <CreatePost handleCreatePost={handleCreatePost} />
       <VStack align={"stretch"} mt={2}>
         {posts.map((post) => (
-          <Card>
-            <CardHeader>
-              <Box>
-                <Heading size="sm">{post.author.username}</Heading>
-                <Text>{new Date(post.createdAt).toDateString()}</Text>
-              </Box>
-            </CardHeader>
-            <CardBody>
-              <Text>{post.content}</Text>
-              <Gallery files={post.files} hideIfEmpty={true} />
-            </CardBody>
-          </Card>
+          <PostCard post={post} key={post.id} />
         ))}
       </VStack>
     </Box>

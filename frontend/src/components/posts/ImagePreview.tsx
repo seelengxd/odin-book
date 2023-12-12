@@ -15,7 +15,6 @@ function ImagePreview({ file }: Props) {
   useEffect(() => {
     if (file instanceof File) {
       const objectUrl = URL.createObjectURL(file);
-      console.log({ objectUrl });
       setPreview(objectUrl);
 
       return () => URL.revokeObjectURL(objectUrl);
