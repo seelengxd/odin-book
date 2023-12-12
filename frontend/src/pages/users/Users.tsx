@@ -1,8 +1,5 @@
 import {
   Box,
-  Button,
-  Card,
-  HStack,
   Heading,
   Icon,
   Tab,
@@ -10,20 +7,19 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
-  Text,
-  VStack,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { userApi } from "../../api/users";
-import { UserWithFriendStatus } from "../../types/user";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
-import { Add } from "@mui/icons-material";
 import UserList from "./UserList";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUsers, setUsers } from "../../reducers/userSlice";
 
 export function Users() {
-  const [users, setUsers] = useState<UserWithFriendStatus[]>([]);
+  const dispatch = useDispatch();
+  const users = useSelector(selectUsers);
   const loadUsers = () => {
-    userApi.getUsers().then((users) => setUsers(users));
+    userApi.getUsers().then((users) => dispatch(setUsers(users)));
   };
   const sendFriendRequest = async (otherUserId: number) => {
     await userApi.sendFriendRequest(otherUserId);
@@ -33,8 +29,7 @@ export function Users() {
     await userApi.handleFriendRequest(otherUserId, accept);
     await loadUsers();
   };
-  console.log({ users });
-  useEffect(loadUsers, []);
+  useEffect(loadUsers, [dispatch]);
   return (
     <Box width={"80%"}>
       <Heading mb={2}>
