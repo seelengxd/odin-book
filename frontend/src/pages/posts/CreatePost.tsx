@@ -12,6 +12,7 @@ import {
   TabPanels,
   Tabs,
   Textarea,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { Edit, Photo, PhotoAlbum } from "@mui/icons-material";
 import { useFormik } from "formik";
@@ -49,6 +50,8 @@ function CreatePost({ handleCreatePost }: Props) {
   const { touched, errors, values, handleChange, handleBlur, handleSubmit } =
     formik;
 
+  const iconColor = useColorModeValue("green.600", "green.200");
+
   return (
     <Card p={2}>
       <form onSubmit={handleSubmit}>
@@ -79,7 +82,7 @@ function CreatePost({ handleCreatePost }: Props) {
 
               <Divider mt={2} mb={2} />
               <Button
-                leftIcon={<Icon as={Photo} color="green.200" />}
+                leftIcon={<Icon as={Photo} color={iconColor} />}
                 onClick={() => inputRef.current!.click()}
               >
                 Photo / Video{" "}

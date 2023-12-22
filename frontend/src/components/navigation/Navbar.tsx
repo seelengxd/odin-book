@@ -6,6 +6,9 @@ import {
   Spacer,
   Text,
   Button,
+  IconButton,
+  useColorMode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,20 +19,24 @@ import { useEffect } from "react";
 import { userApi } from "../../api/users";
 import NotificationCount from "../notification/NotificationCount";
 import { selectIncomingRequestCount, setUsers } from "../../reducers/userSlice";
+import { DarkMode, LightMode } from "@mui/icons-material";
 
 function Navbar() {
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const incoming = useSelector(selectIncomingRequestCount);
+  const { colorMode, toggleColorMode } = useColorMode();
 
   useEffect(() => {
     if (user) {
       userApi.getUsers().then((users) => dispatch(setUsers(users)));
     }
   }, [user, dispatch]);
+
+  const navBarColor = useColorModeValue("blue.300", "blue.600");
   return (
-    <Flex width={"100%"} p={4} backgroundColor={"blue.600"}>
+    <Flex width={"100%"} p={4} backgroundColor={navBarColor}>
       <HStack>
         <Icon as={MenuBookIcon} boxSize={"1em"} />
         <ChakraLink as={Link} to="/">
@@ -60,6 +67,14 @@ function Navbar() {
           </HStack>
           <Spacer />
           <HStack>
+            <Text fontSize="lg" fontWeight={"bold"}>
+              {user.username}
+            </Text>
+            <IconButton
+              icon={colorMode === "light" ? <LightMode /> : <DarkMode />}
+              onClick={toggleColorMode}
+              aria-label="change theme"
+            ></IconButton>
             <Button
               onClick={() =>
                 authApi
@@ -70,9 +85,6 @@ function Navbar() {
             >
               Log Out
             </Button>
-            <Text fontSize="lg" fontWeight={"bold"}>
-              {user.username}
-            </Text>
           </HStack>
         </>
       )}

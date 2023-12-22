@@ -11,6 +11,7 @@ import {
   Icon,
   Text,
   Tooltip,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { Post } from "../../types/post";
 import Gallery from "../../components/posts/Gallery";
@@ -29,6 +30,7 @@ function PostCard({ post, handleLike }: Props) {
     .some((user) => user.id === currentUser!.id);
 
   const likeCount = post.likes.length;
+  const likeColor = useColorModeValue("blue.600", "blue.200");
   return (
     <Card>
       <CardHeader>
@@ -61,7 +63,7 @@ function PostCard({ post, handleLike }: Props) {
           {isLiked ? (
             <Button
               aria-label="like"
-              leftIcon={<Icon as={ThumbUpSharp} color="blue.200" />}
+              leftIcon={<Icon as={ThumbUpSharp} color={likeColor} />}
               onClick={handleLike}
             >
               Liked
